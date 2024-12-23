@@ -39,7 +39,7 @@ module.exports = {
     proxy: {
       // path：目标服务器 百度，新浪，网易....
       '/api': {
-        target: 'https://heimahr.itheima.net/'
+        target: 'https://heimahr.itheima.net'
       }
     }
     // before: require('./mock/mock-server.js')  // 基础模板做的模拟数据，拦截请求
