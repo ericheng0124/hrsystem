@@ -3,9 +3,9 @@
     <div class="dashboard-text">name: {{ name }}</div>
     <!-- 使用svg-icon组件 -->
     <!-- 设置iconClass属性="文件名(没有后缀)" -->
-    <svg-icon icon-class="dashboard" />
+    <!-- <svg-icon icon-class="dashboard" />
     <svg-icon icon-class="example" />
-    <svg-icon icon-class="password" />
+    <svg-icon icon-class="password" /> -->
   </div>
 </template>
 
