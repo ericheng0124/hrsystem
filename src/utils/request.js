@@ -20,18 +20,18 @@ service.interceptors.request.use((config) => {
   return Promise.reject(error)
 })
 
-// 相应拦截器
+// 响应拦截器
 service.interceptors.response.use((response) => {
-  const { data, message, sucess } = response.data
-  if (sucess) {
+  const { data, message, success } = response.data // 默认json格式
+  if (success) {
     return data
   } else {
-    Message({ type: 'error', message: message })
+    Message({ type: 'error', message })
     return Promise.reject(new Error(message))
   }
 }, (error) => {
   // error.message
-  Message({ type: 'error', message: 'error.message' })
+  Message({ type: 'error', message: error.message })
   return Promise.reject(error)
 })
 

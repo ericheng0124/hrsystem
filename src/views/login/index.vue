@@ -30,28 +30,40 @@ export default {
   data() {
     return {
       loginForm: {
-        mobile: '',
-        password: '',
-        isAgree: false
+        mobile: process.env.NODE_ENV === 'development' ? '13800000002' : '',
+        password: process.env.NODE_ENV === 'development' ? 'hm#qd@23!' : '',
+        isAgree: process.env.NODE_ENV === 'development'
       },
       loginRules: {
-        mobile: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 16, message: '密码长度在6-16位', trigger: 'blur' }
-        ],
-        // required只能检测 null undefined ''，不能检测 布尔值
+        mobile: [{
+          required: true,
+          message: '请输入手机号',
+          trigger: 'blur'
+        }, {
+          pattern: /^1[3-9]\d{9}$/,
+          message: '手机号格式不正确',
+          trigger: 'blur'
+
+        }],
+        password: [{
+          required: true,
+          message: '请输入密码',
+          trigger: 'blur'
+        }, {
+          min: 6,
+          max: 16,
+          message: '密码长度应该为6-16位之间',
+          trigger: 'blur'
+
+        }],
+        // required只能检查 null "" undefined
         isAgree: [{
           validator: (rule, value, callback) => {
-            // rule 校验的规则
-            // value 校验的值
-            // callback 回调函数 -> 类似于Promise 的 resolve 和 reject
-            // 成功了直接执行callback()，失败了执行callback(new Error('错误信息'))
-            // 成功与失败由value值决定
-            value ? callback() : callback(new Error('请同意用户平台使用协议'))
+            // rule规则
+            // value检查的数据 true/false
+            // callback 函数 执行这个函数
+            // 成功执行callback 失败也执行callback(错误对象 new Error(错误信息))
+            value ? callback() : callback(new Error('没有勾选用户平台协议'))
           }
         }]
       }
@@ -59,12 +71,12 @@ export default {
   },
   methods: {
     login() {
-      this.$refs.form.validate((isOK) => {
+      this.$refs.form.validate(async(isOK) => {
         if (isOK) {
-          console.log('校验通过')
-          this.$store.dispatch('user/login', this.loginForm)
-        } else {
-          console.log('校验失败')
+          await this.$store.dispatch('user/login', this.loginForm)
+          // Vuex 中的action 返回的promise
+          // 跳转主页
+          this.$router.push('/')
         }
       })
     }
