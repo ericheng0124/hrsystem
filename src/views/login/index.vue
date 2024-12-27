@@ -15,7 +15,7 @@
           </el-form-item>
           <el-form-item prop="isAgree">
             <el-checkbox v-model="loginForm.isAgree">
-              <a @click.prevent="dialogVisible=true">用户平台使用协议</a>
+              用户平台使用协议
             </el-checkbox>
           </el-form-item>
           <el-form-item>
