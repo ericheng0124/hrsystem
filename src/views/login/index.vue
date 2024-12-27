@@ -14,7 +14,9 @@
             <el-input v-model="loginForm.password" placeholder="请输入密码" show-password />
           </el-form-item>
           <el-form-item prop="isAgree">
-            <el-checkbox v-model="loginForm.isAgree">用户平台使用协议</el-checkbox>
+            <el-checkbox v-model="loginForm.isAgree">
+              <a @click.prevent="dialogVisible=true">用户平台使用协议</a>
+            </el-checkbox>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" style="width: 350px;" @click="login">登录</el-button>
