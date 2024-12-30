@@ -2,7 +2,6 @@ import router from '@/router'
 import nProgress from 'nprogress' // 引入进度条
 import 'nprogress/nprogress.css' // 引入进度条样式
 import store from '@/store'
-import { getUserInfo } from './api/user'
 
 /*
   前置守卫
