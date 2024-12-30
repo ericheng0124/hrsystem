@@ -119,17 +119,42 @@ export function param2Obj(url) {
 /*
   列表型数据转换成树形结构
 */
+// export const transListToTreeData = (list, rootValue) => {
+//   const arr = []
+//   list.forEach(item => {
+//     if (item.pid === rootValue) {
+//       // 找到匹配节点
+//       arr.push(item)
+//       // 当前节点的ip和当前节点的子节点的pid也是相等的
+//       const children = transListToTreeData(list, item.id) // 找到的当前节点的子节点
+//       item.children = children // 将子节点赋值给当前节点
+//     }
+//   })
+//   return arr
+// }
 
+// reduce方法实现
 export const transListToTreeData = (list, rootValue) => {
-  const arr = []
-  list.forEach(item => {
-    if (item.pid === rootValue) {
-      // 找到匹配节点
-      arr.push(item)
-      // 当前节点的ip和当前节点的子节点的pid也是相等的
-      const children = transListToTreeData(list, item.id) // 找到的当前节点的子节点
-      item.children = children // 将子节点赋值给当前节点
+  return list.reduce((treeList, cur) => {
+    if (cur.pid === rootValue) {
+      treeList.push(cur)
+      // 查找主节点的子节点
+      const children = transListToTreeData(list, cur.id)
+      cur.children = children
     }
-  })
-  return arr
+    return treeList
+  }, [])
 }
+
+// map方法实现
+// export const transListToTreeData = (list, rootValue) => {
+//   const treeList = []
+//   list.map(item => {
+//     if (item.pid === rootValue) {
+//       treeList.push(item)
+//       const children = transListToTreeData(list, item.id)
+//       item.children = children
+//     }
+//   })
+//   return treeList
+// }
