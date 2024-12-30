@@ -12,11 +12,11 @@
         <!-- 节点结构 -->
         <!-- v-slot="{node,data}" 只能作用在template标签上 -->
         <template v-slot="{data}">
-          <el-row style="width: 100%;height: 40px;" type="flex" justify="space-between" align="middle">
+          <el-row style="width: 100%;height: 40px;" type="flex" justify="space-around" align="middle">
             <el-col>{{ data.name }}</el-col>
             <el-col :span="4">
               <span class="tree-manager">{{ data.managerName }}</span>
-              <el-dropdown>
+              <el-dropdown style="margin-left: 25px;">
                 <!-- 下拉菜单显示区域内容 -->
                 <span class="el-dropdown-link">
                   下拉菜单<i class="el-icon-arrow-down el-icon--right" />
@@ -37,34 +37,26 @@
 </template>
 
 <script>
-
+import { getDepartment } from '@/api/department'
+import { transListToTreeData } from '@/utils'
 export default {
   neme: 'Department',
   data() {
     return {
-      depts: [
-        { name: '传智教育',
-          managerName: '管理员',
-          children: [
-            {
-              name: '总裁办',
-              managerName: '张三'
-            },
-            {
-              name: '行政部',
-              managerName: '李四'
-            },
-            {
-              name: '人事部',
-              managerName: '王五'
-            }
-          ]
-        }
-      ], // 数据树形
+      depts: [], // 数据树形
       defaultProps: {
         label: 'name', // 要显示的字段的名字
         children: 'children'
       }
+    }
+  },
+  created() {
+    this.getDepartment()
+  },
+  methods: {
+    async getDepartment() {
+      const result = await getDepartment()
+      this.depts = transListToTreeData(result, 0)
     }
   }
 }
