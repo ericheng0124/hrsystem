@@ -12,7 +12,10 @@
         <el-input v-model="formData.code" style="width: 80%" size="mini" placeholder="2-10个字符" />
       </el-form-item>
       <el-form-item label="部门负责人" prop="managerId">
-        <el-select v-model="formData.managerId" style="width: 80%" size="mini" placeholder="请选择负责人" />
+        <el-select v-model="formData.managerId" style="width: 80%" size="mini" placeholder="请选择负责人">
+          <!-- 下拉选项 循环 负责人数据 laber:显示字段 value:存储字段 -->
+          <el-option v-for="item in managerList" :key="item.id" :label="item.username" :value="item.id" />
+        </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
         <el-input v-model="formData.introduce" style="width: 80%" type="textarea" :rows="4" size="mini" placeholder="1-100个字符" />
@@ -31,7 +34,7 @@
 </template>
 
 <script>
-import { getDepartment } from '@/api/department'
+import { getDepartment, getManagerList } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -73,7 +76,6 @@ export default {
         ], // 部门介绍
         managerId: [
           { required: true, message: '部门负责人不能为空', trigger: 'blur' }
-
         ], // 部门负责人名字
         name: [
           { required: true, message: '部门名称不能为空', trigger: 'blur' },
@@ -93,14 +95,21 @@ export default {
             }
           }
         ] // 部门名称
-      }
+      },
+      managerList: [] // 存储负责人的列表
     }
+  },
+  created() {
+    this.getManagerList()
   },
   methods: {
     close() {
       this.$refs.addDept.resetFields() // 清空表单内容
       // 修改父组件的值 子传父
       this.$emit('update:showDialog', false)
+    },
+    async getManagerList() {
+      this.managerList = await getManagerList()
     }
   }
 }

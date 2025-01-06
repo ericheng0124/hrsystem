@@ -9,3 +9,12 @@ export const getDepartment = () => {
     url: '/company/department'
   })
 }
+
+/*
+  获取部门负责人数据
+*/
+export const getManagerList = () => {
+  return request({
+    url: '/sys/user/simple'
+  })
+}
