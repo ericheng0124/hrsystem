@@ -36,7 +36,8 @@
     </div>
     <!-- 放置弹层 -->
     <!-- :show-dialog.sync 表示会接收子组件的事件 update:showDialog 的值 => 给show-Dialog属性 -->
-    <add-dept :show-dialog.sync="showDialog" :current-node-id="currentNodeId" @updateDepartment="getDepartment" />
+    <!-- ref 可以获取dom的实力对象 ref也可以获取自定义组件的实力对象 -->
+    <add-dept ref="addDept" :show-dialog.sync="showDialog" :current-node-id="currentNodeId" @updateDepartment="getDepartment" />
   </div>
 </template>
 
@@ -75,6 +76,18 @@ export default {
         // 添加子部门
         this.showDialog = true
         this.currentNodeId = id
+      } else if (type === 'edit') {
+        // 编辑部门
+        this.showDialog = true
+        // 更新props属性 -> 异步动作
+        this.currentNodeId = id // 记录id 用它获取数据
+        // 要在子组件获取数据
+        // 父组件调用子组件的方法来获取数据
+        // 直接调用子组件方法 -> 同步动作
+        // 等待前面的刷新渲染完成之后，再执行回调任务，即前面的props数据更新完毕，再执行回调函数
+        this.$nextTick(() => {
+          this.$refs.addDept.getDepartmentDetail() // this.$refs.addDept等同于子组件的this
+        })
       }
     }
   }
