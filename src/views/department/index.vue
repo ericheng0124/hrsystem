@@ -36,7 +36,7 @@
     </div>
     <!-- 放置弹层 -->
     <!-- :show-dialog.sync 表示会接收子组件的事件 update:showDialog 的值 => 给show-Dialog属性 -->
-    <add-dept :show-dialog.sync="showDialog" :current-node-id="currentNodeId" />
+    <add-dept :show-dialog.sync="showDialog" :current-node-id="currentNodeId" @updateDepartment="getDepartment" />
   </div>
 </template>
 

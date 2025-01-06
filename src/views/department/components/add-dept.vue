@@ -4,7 +4,7 @@
   <!-- :close-on-click-modal="false" 关闭点击蒙层关闭弹层效果 -->
   <el-dialog title="新增部门" :visible="showDialog" :close-on-click-modal="false" @close="close">
     <!-- 放置弹层表单 -->
-    <el-form ref="addDept" label-width="120px" :model="formData" :rules="rules">
+    <el-form ref="addDept" :model="formData" :rules="rules" label-width="120px">
       <el-form-item label="部门名称" prop="name">
         <el-input v-model="formData.name" style="width: 80%" size="mini" placeholder="2-10个字符" />
       </el-form-item>
@@ -24,7 +24,7 @@
         <!-- 按钮 -->
         <el-row type="flex" justify="center">
           <el-col :span="12">
-            <el-button type="primary" size="mini">确定</el-button>
+            <el-button type="primary" size="mini" @click="btnOK">确定</el-button>
             <el-button size="mini" style="margin-left: 40px" @click="close">取消</el-button>
           </el-col>
         </el-row>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getDepartment, getManagerList } from '@/api/department'
+import { getDepartment, getManagerList, addDepartment } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -48,6 +48,7 @@ export default {
   },
   data() {
     return {
+      managerList: [], // 存储负责人的列表
       formData: {
         code: '', // 部门编码
         introduce: '', // 部门介绍
@@ -56,6 +57,7 @@ export default {
         pid: '' // 部门父级部门id
       },
       rules: {
+        // 部门编码
         code: [
           { required: true, message: '部门编码不能为空', trigger: 'blur' },
           { min: 2, max: 10, message: '部门编码的长度为2-10个字符', trigger: 'blur' },
@@ -73,14 +75,17 @@ export default {
               }
             }
           }
-        ], // 部门编码
+        ],
+        // 部门介绍
         introduce: [
           { required: true, message: '部门介绍不能为空', trigger: 'blur' },
           { min: 1, max: 100, message: '部门介绍的长度为1-100个字符', trigger: 'blur' }
-        ], // 部门介绍
+        ],
+        // 部门负责人名字
         managerId: [
           { required: true, message: '部门负责人不能为空', trigger: 'blur' }
-        ], // 部门负责人名字
+        ],
+        // 部门名称
         name: [
           { required: true, message: '部门名称不能为空', trigger: 'blur' },
           { min: 2, max: 10, message: '部门名称的长度为2-10个字符', trigger: 'blur' },
@@ -98,15 +103,15 @@ export default {
               }
             }
           }
-        ] // 部门名称
-      },
-      managerList: [] // 存储负责人的列表
+        ]
+      }
     }
   },
   created() {
     this.getManagerList()
   },
   methods: {
+    // 关闭的方法
     close() {
       this.$refs.addDept.resetFields() // 清空表单内容
       // 修改父组件的值 子传父
@@ -114,6 +119,20 @@ export default {
     },
     async getManagerList() {
       this.managerList = await getManagerList()
+    },
+    // 点击确定时调用
+    btnOK() {
+      this.$refs.addDept.validate(async isOK => {
+        if (isOK) {
+          await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          // 通知父组件更新
+          this.$emit('updateDepartment')
+          // 提示消息
+          this.$message.success('新增部门成功')
+          // 重置表单 关闭弹层
+          this.close()
+        }
+      })
     }
   }
 }
