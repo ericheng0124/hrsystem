@@ -2,7 +2,7 @@
 
 <template>
   <!-- :close-on-click-modal="false" 关闭点击蒙层关闭弹层效果 -->
-  <el-dialog title="新增部门" :visible="showDialog" :close-on-click-modal="false" @close="close">
+  <el-dialog :title="showTitle" :visible="showDialog" :close-on-click-modal="false" @close="close">
     <!-- 放置弹层表单 -->
     <el-form ref="addDept" :model="formData" :rules="rules" label-width="120px">
       <el-form-item label="部门名称" prop="name">
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getDepartment, getManagerList, addDepartment, getDepartmentDetail } from '@/api/department'
+import { getDepartment, getManagerList, addDepartment, getDepartmentDetail, updateDepartment } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -118,6 +118,11 @@ export default {
       }
     }
   },
+  computed: {
+    showTitle() {
+      return this.formData.id ? '更新部门' : '编辑部门'
+    }
+  },
   created() {
     this.getManagerList()
   },
@@ -125,6 +130,14 @@ export default {
     // 关闭的方法
     close() {
       this.$refs.addDept.resetFields() // 清空表单内容
+      // 手动清空一下formData的id属性，将formData手动初始化清空
+      this.formData = {
+        code: '', // 部门编码
+        introduce: '', // 部门介绍
+        managerId: '', // 部门负责人名字
+        name: '', // 部门名称
+        pid: '' // 部门父级部门id
+      }
       // 修改父组件的值 子传父
       this.$emit('update:showDialog', false)
     },
@@ -135,11 +148,20 @@ export default {
     btnOK() {
       this.$refs.addDept.validate(async isOK => {
         if (isOK) {
-          await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          let msg = '新增'
+          // 通过formData中的id来判断是新增还是更新
+          if (this.formData.id) {
+            // 编辑场景
+            msg = '编辑'
+            await updateDepartment({ ...this.formData })
+          } else {
+            // 新增场景
+            await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          }
           // 通知父组件更新
           this.$emit('updateDepartment')
           // 提示消息
-          this.$message.success('新增部门成功')
+          this.$message.success(`${msg}部门成功`)
           // 重置表单 关闭弹层
           this.close()
         }
