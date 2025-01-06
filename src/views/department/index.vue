@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { getDepartment } from '@/api/department'
+import { delDepartment, getDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import AddDept from './components/add-dept.vue'
 
@@ -87,6 +87,18 @@ export default {
         // 等待前面的刷新渲染完成之后，再执行回调任务，即前面的props数据更新完毕，再执行回调函数
         this.$nextTick(() => {
           this.$refs.addDept.getDepartmentDetail() // this.$refs.addDept等同于子组件的this
+        })
+      } else {
+        // 删除部门
+        this.$confirm('您确认要删除该部门吗？', { confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning' }).then(async() => {
+          await delDepartment(id)
+          this.$message({
+            type: 'success',
+            message: '删除部门成功!'
+          })
+          this.getDepartment()
         })
       }
     }

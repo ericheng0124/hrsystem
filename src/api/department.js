@@ -49,3 +49,13 @@ export const updateDepartment = (data) => {
     data
   })
 }
+
+/*
+  删除部门的请求
+*/
+export const delDepartment = (id) => {
+  return request({
+    url: `/company/department/${id}`,
+    method: 'delete'
+  })
+}
