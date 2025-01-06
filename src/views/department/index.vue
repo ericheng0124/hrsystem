@@ -63,6 +63,7 @@ export default {
   methods: {
     async getDepartment() {
       const result = await getDepartment()
+      // 调用方法将列表型数据转换成树形结构
       this.depts = transListToTreeData(result, 0)
     },
     // 操作部门的方法
