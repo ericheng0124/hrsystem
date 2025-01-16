@@ -11,3 +11,12 @@ export const getRoleList = (params) => {
     params // 查询参数
   })
 }
+
+// 新增角色
+export const addRole = (data) => {
+  request({
+    url: '/sys/role',
+    method: 'post',
+    data
+  })
+}

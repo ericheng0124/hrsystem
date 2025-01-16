@@ -146,6 +146,7 @@ export default {
     },
     // 点击确定时调用
     btnOK() {
+      // 效验表单
       this.$refs.addDept.validate(async isOK => {
         if (isOK) {
           let msg = '新增'
