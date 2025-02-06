@@ -6,7 +6,7 @@
         <el-button type="primary" size="mini" @click="showDialog=true">添加角色</el-button>
       </div>
       <!-- 放置table组件 -->
-      <el-table :data="rileList">
+      <el-table :data="roleList">
         <!-- 放置列 -->
         <el-table-column
           type="index"
@@ -14,20 +14,40 @@
           align="center"
           label="序号"
         />
-        <el-table-column width="200px" label="角色" align="center" prop="name" />
+        <el-table-column width="200px" label="角色" align="center" prop="name">
+          <template v-slot="{row}">
+            <!-- 条件判断 -->
+            <el-input v-if="row.isEdit" v-model="row.editRow.name" size="mini" />
+            <span v-else>{{ row.name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column width="200px" label="启用" align="center" prop="state">
           <!-- 自定义列结构 -->
           <template v-slot="{row}">
-            {{ row.state===1?'已启用':row.state===0?'未启用':'无' }}
+            <el-switch v-if="row.isEdit" v-model="row.editRow.state" :active-value="1" :inactive-value="0" />
+            <span v-else>{{ row.state===1?'已启用':row.state===0?'未启用':'无' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="描述" align="center" prop="description" />
+        <el-table-column label="描述" align="center" prop="description">
+          <template v-slot="{row}">
+            <el-input v-if="row.isEdit" v-model="row.editRow.description" type="textarea" size="mini" />
+            <span v-else>{{ row.description }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center">
           <!-- 放置按钮 -->
-          <template>
-            <el-button size="mini" type="text">分配权限</el-button>
-            <el-button size="mini" type="text">编辑</el-button>
-            <el-button size="mini" type="text">删除</el-button>
+          <template v-slot="{row}">
+            <!-- 编辑状态 -->
+            <template v-if="row.isEdit">
+              <el-button size="mini" type="primary">更新</el-button>
+              <el-button size="mini">取消</el-button>
+            </template>
+            <!-- 非编辑状态 -->
+            <template v-else>
+              <el-button size="mini" type="text">分配权限</el-button>
+              <el-button size="mini" type="text" @click="btnEditRow(row)">编辑</el-button>
+              <el-button size="mini" type="text">删除</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -81,7 +101,7 @@ export default {
   neme: 'Role',
   data() {
     return {
-      rileList: [],
+      roleList: [],
       // 将分页信息放入到一个对象中
       pageParams: {
         page: 1, // 当前是第几页 即element ui 中的 current-page
@@ -110,8 +130,22 @@ export default {
   methods: {
     async getRoleList() {
       const { rows, total } = await getRoleList(this.pageParams)
-      this.rileList = rows
+      this.roleList = rows
       this.pageParams.total = total
+      // 针对每一行数据添加一个编辑状态的标记
+      this.roleList.forEach(item => {
+        // item.isEdit = false // 添加一个属性，初始值为false
+        // 数据响应式问题  数据变化  视图更新
+        // 动态添加的属性 不具备响应式特点
+        // this.$set(目标对象，需要添加的属性名称，添加的属性的初始值) 可以针对目标对象 添加的属性 添加响应式
+        this.$set(item, 'isEdit', false)
+        // 创建每一行的缓存数据
+        this.$set(item, 'editRow', {
+          name: item.name,
+          state: item.state,
+          description: item.description
+        })
+      })
     },
     // 切换分页时请求新的数据
     changePage(newPage) {
@@ -136,6 +170,17 @@ export default {
       await this.getRoleList()
       // 关闭弹层
       this.close()
+    },
+    // 点击编辑行
+    btnEditRow(row) {
+      row.isEdit = !row.isEdit
+      console.log(row)
+      // 更新行缓存数据
+      row.editRow = {
+        name: row.name,
+        state: row.state,
+        description: row.description
+      }
     }
   }
 }

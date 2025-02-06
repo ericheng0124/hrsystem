@@ -17,7 +17,7 @@
             <el-col :span="4">
               <span class="tree-manager">{{ data.managerName }}</span>
               <!-- $event 实参 表示 下拉菜单的类型(add,edit,del) -->
-              <el-dropdown style="margin-left: 25px;" @command="operateDept($event,data.id)">
+              <el-dropdown style="margin-left: 25px;" @command="operateDept($event,data)">
                 <!-- 下拉菜单显示区域内容 -->
                 <span class="el-dropdown-link">
                   操作<i class="el-icon-arrow-down el-icon--right" />
@@ -70,17 +70,17 @@ export default {
       this.depts = transListToTreeData(result, 0)
     },
     // 操作部门的方法
-    operateDept(type, id) {
+    operateDept(type, data) {
       // console.log(type, id)
       if (type === 'add') {
         // 添加子部门
         this.showDialog = true
-        this.currentNodeId = id
+        this.currentNodeId = data.id
       } else if (type === 'edit') {
         // 编辑部门
         this.showDialog = true
         // 更新props属性 -> 异步动作
-        this.currentNodeId = id // 记录id 用它获取数据
+        this.currentNodeId = data.id // 记录id 用它获取数据
         // 要在子组件获取数据
         // 父组件调用子组件的方法来获取数据
         // 直接调用子组件方法 -> 同步动作
@@ -90,10 +90,10 @@ export default {
         })
       } else {
         // 删除部门
-        this.$confirm('您确认要删除该部门吗？', { confirmButtonText: '确定',
+        this.$confirm(`您确认要删除【${data.name}】部门吗？`, { confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning' }).then(async() => {
-          await delDepartment(id)
+          await delDepartment(data.id)
           this.$message({
             type: 'success',
             message: '删除部门成功!'
