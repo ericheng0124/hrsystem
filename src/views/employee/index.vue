@@ -23,14 +23,14 @@
           <el-button size="mini">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
-        <el-table>
-          <el-table-column align="center" label="头像" />
-          <el-table-column label="姓名" />
-          <el-table-column label="手机号" sortable />
-          <el-table-column label="工号" sortable />
-          <el-table-column label="聘用形式" />
-          <el-table-column label="部门" />
-          <el-table-column label="入职时间" sortable />
+        <el-table :data="employeeList">
+          <el-table-column prop="staffPhoto" align="center" label="头像" />
+          <el-table-column prop="username" label="姓名" />
+          <el-table-column prop="mobile" label="手机号" sortable />
+          <el-table-column prop="workNumber" label="工号" sortable />
+          <el-table-column prop="formOfEmployment" label="聘用形式" />
+          <el-table-column prop="departmentName" label="部门" />
+          <el-table-column prop="timeOfEntry" label="入职时间" sortable />
           <el-table-column align="center" label="操作" width="280px">
             <template>
               <el-button type="text" size="mini">查看</el-button>
@@ -54,6 +54,7 @@
 <script>
 import { getDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils/index'
+import { getEmployeeList } from '@/api/employee'
 export default {
   name: 'Employee',
   data() {
@@ -65,7 +66,8 @@ export default {
       },
       queryParams: {
         departmentId: null
-      }
+      },
+      employeeList: []
     }
   },
   created() {
@@ -83,10 +85,19 @@ export default {
       this.$nextTick(() => {
         this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
       })
+      // 此时参数才记录的选中的部门id
+      this.getEmployeeList()
     },
     selectNode(node) {
-      console.log(node)
+      // console.log(node)
+      // 重新记录的id
       this.queryParams.departmentId = node.id
+      this.getEmployeeList()
+    },
+    // 获取员工列表的方法
+    async getEmployeeList() {
+      const { rows } = await getEmployeeList(this.queryParams)
+      this.employeeList = rows
     }
   }
 }
