@@ -6,11 +6,14 @@
         <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
         <!-- 树形组件 -->
         <el-tree
+          ref="deptTree"
           :data="depts"
           :props="defaultProps"
           default-expand-all
           :expand-on-click-node="false"
           :highlight-current="true"
+          node-key="id"
+          @current-change="selectNode"
         />
       </div>
       <div class="right">
@@ -37,6 +40,9 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'name'
+      },
+      queryParams: {
+        departmentId: null
       }
     }
   },
@@ -47,7 +53,18 @@ export default {
     // 获取部门列表
     async getDepartment() {
       const result = await getDepartment()
+      // 转换为树形结构
       this.depts = transListToTreeData(result, 0)
+      this.queryParams.departmentId = this.depts[0].id
+      // 设置选中节点
+      // 树形结构的渲染是异步的，使用 $nextTick 方法等到渲染完成后再设置选中节点
+      this.$nextTick(() => {
+        this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
+      })
+    },
+    selectNode(node) {
+      console.log(node)
+      this.queryParams.departmentId = node.id
     }
   }
 }
