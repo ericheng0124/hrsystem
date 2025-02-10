@@ -31,7 +31,7 @@
           <el-table-column prop="formOfEmployment" label="聘用形式" />
           <el-table-column prop="departmentName" label="部门" />
           <el-table-column prop="timeOfEntry" label="入职时间" sortable />
-          <el-table-column align="center" label="操作" width="280px">
+          <el-table-column label="操作" width="280px">
             <template>
               <el-button type="text" size="mini">查看</el-button>
               <el-button type="text" size="mini">角色</el-button>
