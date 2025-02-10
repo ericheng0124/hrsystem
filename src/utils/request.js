@@ -5,7 +5,7 @@ import router from '@/router'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // 基础地址
-  timeout: 10000 // 请求超时时间
+  timeout: 20000 // 请求超时时间
 }) // 创建一个新的axios实例
 
 // 请求拦截器 2个参数，都是回调函数，成功了执行第一个，失败了执行第二个
@@ -23,6 +23,11 @@ service.interceptors.request.use((config) => {
 
 // 响应拦截器
 service.interceptors.response.use((response) => {
+  // axios 默认包裹了一层data
+  // 导出excel文件时响应体格式是二进制流blob格式，这里进行一下判断
+  if (response.data instanceof Blob) {
+    return response.data // 直接返回二进制流数据
+  }
   const { data, message, success } = response.data // 默认json格式
   if (success) {
     return data
