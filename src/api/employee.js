@@ -19,3 +19,11 @@ export const exportEmployee = () => {
     responseType: 'blob' // 申明使用blob格式接收二进制流数据
   })
 }
+
+// 下载导入员工信息的导入模板
+export const getExportTemplate = () => {
+  return request({
+    url: '/sys/user/import/template',
+    responseType: 'blob' // 申明使用blob格式接收二进制流数据
+  })
+}
