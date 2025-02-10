@@ -3,7 +3,15 @@
     <div class="app-container">
       <div class="left">
         <!-- 搜索框 -->
-        <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
+        <el-input
+          v-model="queryParams.keyword"
+          style="margin-bottom:10px"
+          type="text"
+          prefix-icon="el-icon-search"
+          size="small"
+          placeholder="输入员工姓名全员搜索"
+          @input="changeValue"
+        />
         <!-- 树形组件 -->
         <el-tree
           ref="deptTree"
@@ -78,12 +86,14 @@ export default {
         children: 'children',
         label: 'name'
       },
+      // 存储查询参数
       queryParams: {
         departmentId: null,
         page: 1, // 当前页码，初始值为1
-        pageSize: 10 // 每页显示条数
+        pageSize: 10, // 每页显示条数
+        keyword: '' // 搜索关键字
       },
-      employeeList: [],
+      employeeList: [], // 存储员工列表数据
       total: 0 // 记录当前查询员工的总数
     }
   },
@@ -123,6 +133,18 @@ export default {
       // console.log(newPage)
       this.queryParams.page = newPage // 更新当前页码
       this.getEmployeeList()
+    },
+    // 搜索框输入事件
+    changeValue() {
+      // console.log(this.queryParams.keyword)
+      // 防抖延迟处理
+      // 使用定时器 控制 单位时间内只执行最后一次
+      // 给this的实例上赋值一个timer属性（非响应式），用来存储定时器
+      clearTimeout(this.timer) // 清理上一次的定时器
+      this.timer = setTimeout(() => {
+        this.queryParams.page = 1 // 重置页码
+        this.getEmployeeList()
+      }, 300)
     }
   }
 }
