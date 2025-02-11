@@ -127,7 +127,9 @@ export function param2Obj(url) {
 //       arr.push(item)
 //       // 当前节点的ip和当前节点的子节点的pid也是相等的
 //       const children = transListToTreeData(list, item.id) // 找到的当前节点的子节点
-//       item.children = children // 将子节点赋值给当前节点
+//       if (children.length) {
+//        item.children = children // 将子节点赋值给当前节点
+//       }
 //     }
 //   })
 //   return arr
@@ -140,7 +142,10 @@ export const transListToTreeData = (list, rootValue) => {
       treeList.push(cur)
       // 查找主节点的子节点
       const children = transListToTreeData(list, cur.id)
-      cur.children = children
+      // 只有在子节点存在的情况下才会赋值
+      if (children.length) {
+        cur.children = children
+      }
     }
     return treeList
   }, [])
@@ -153,7 +158,9 @@ export const transListToTreeData = (list, rootValue) => {
 //     if (item.pid === rootValue) {
 //       treeList.push(item)
 //       const children = transListToTreeData(list, item.id)
-//       item.children = children
+//       if (children.length) {
+//        item.children = children
+//       }
 //     }
 //   })
 //   return treeList

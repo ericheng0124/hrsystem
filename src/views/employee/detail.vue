@@ -37,6 +37,8 @@
             <el-col :span="12">
               <el-form-item label="部门" prop="departmentId">
                 <!-- 放置及联部门组件 -->
+                <!-- inputW样式会给到selectTree中的template的第一层的组件 -->
+                <select-tree v-model="userInfo.departmentId" class="inputW" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -100,15 +102,19 @@
 </template>
 
 <script>
-
+import selectTree from './components/select-tree.vue'
 export default {
+  components: {
+    selectTree
+  },
   data() {
     return {
+      depts: [], // 部门列表
       userInfo: {
         username: '', // 员工姓名
         workNumber: '', // 员工工号
         mobile: '', // 员工手机号
-        departmentId: '', // 员工部门id
+        departmentId: null, // 员工部门id
         formOfEmployment: '', // 聘用形式
         timeOfEntry: '', // 入职时间
         correctionTime: '' // 转正时间
