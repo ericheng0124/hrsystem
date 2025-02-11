@@ -47,7 +47,7 @@
               <el-button size="mini" type="text">分配权限</el-button>
               <el-button size="mini" type="text" @click="btnEditRow(row)">编辑</el-button>
               <el-popconfirm
-                title="这是一段内容确定删除吗？"
+                title="确定删除改角色吗？"
                 @onConfirm="confirmDel(row.id)"
               >
                 <el-button slot="reference" style="margin-left: 10px;" size="mini" type="text">删除</el-button>

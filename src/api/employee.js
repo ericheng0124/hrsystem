@@ -36,3 +36,11 @@ export const uploadExcel = (data) => {
     data // data 的文件类型是form-data类型 因为是用于上传文件
   })
 }
+
+// 删除员工接口
+export const delEmployee = (id) => {
+  return request({
+    url: `/sys/user/${id}`,
+    method: 'delete'
+  })
+}
