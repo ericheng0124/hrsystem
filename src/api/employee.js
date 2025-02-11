@@ -27,3 +27,12 @@ export const getExportTemplate = () => {
     responseType: 'blob' // 申明使用blob格式接收二进制流数据
   })
 }
+
+// 上传excel文件的接口
+export const uploadExcel = (data) => {
+  return request({
+    url: '/sys/user/import',
+    method: 'post',
+    data // data 的文件类型是form-data类型 因为是用于上传文件
+  })
+}

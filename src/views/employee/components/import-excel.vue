@@ -13,13 +13,18 @@
           class="excel-upload-input"
           type="file"
           accept=".xlsx, .xls"
+          @change="uploadChange"
         >
         <div class="drop">
           <i class="el-icon-upload" />
           <el-button type="text" @click="getTemplate">下载导入模板</el-button>
           <span>将文件拖到此处或
-            <el-button type="text">点击上传</el-button>
+            <el-button type="text" @click="uploadTemplate">点击上传</el-button>
           </span>
+          <div v-if="filename">
+            已选择上传文件：
+            <span style="color:red">{{ filename }}</span>
+          </div>
         </div>
       </div>
     </el-row>
@@ -30,7 +35,7 @@
   </el-dialog>
 </template>
 <script>
-import { getExportTemplate } from '@/api/employee'
+import { getExportTemplate, uploadExcel } from '@/api/employee'
 import FileSaver from 'file-saver'
 export default {
   props: {
@@ -39,11 +44,50 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      // 上传的文件
+      filename: null
+    }
+  },
   methods: {
     // 获取下载模板的方法
     async getTemplate() {
       const templateExcel = await getExportTemplate()
       FileSaver.saveAs(templateExcel, '员工导入模板.xlsx')
+    },
+    // 弹出文件选择器-web端只有一种方式，通过input 的类型type='file'来实现
+    // this.$refs.属性名 和 this.$refs['属性名'] 是等价的
+    uploadTemplate() {
+      this.$refs['excel-upload-input'].click() // 触发 input DOM元素的点击事件
+    },
+    // input DOM元素的change事件用来监听文件是否选择了
+    async uploadChange(event) {
+      console.log(event.target.files)
+      const files = event.target.files // input DOM元素的files属性，是一个文件列表
+      if (files.length > 0) {
+        // 说明有需要上传的文件
+        // 调用上传接口
+        const data = new FormData()
+        data.append('file', files[0]) // 将文件添加到form-data对象中
+        this.filename = files[0].name // 保存文件名
+        try {
+          await uploadExcel(data) // 参数是form-data类型
+          // 上传成功后，关闭弹窗
+          this.$emit('uploadSuccess') // 通知父组件，上传成功
+          this.$message.success('上传成功') // 提示上传成功
+          this.$emit('update:showExcelDialog', false) // 关闭弹层
+          // this.$refs['excel-upload-input'].value = '' // 清空input的值
+        } catch (error) {
+          console.log(error)
+          // this.$message.error('上传失败：', error) // 提示上传失败
+          // this.$refs['excel-upload-input'].value = '' // 清空input的值
+        } finally {
+          // 不论成功或者失败，都会执行finally
+          this.filename = null // 上传成功或失败后，清空文件名
+          this.$refs['excel-upload-input'].value = '' // 清空input的值
+        }
+      }
     }
   }
 }
