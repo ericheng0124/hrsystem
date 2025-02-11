@@ -44,3 +44,12 @@ export const delEmployee = (id) => {
     method: 'delete'
   })
 }
+
+// 新增员工接口
+export const addEmployee = (data) => {
+  return request({
+    url: '/sys/user',
+    method: 'post',
+    data
+  })
+}

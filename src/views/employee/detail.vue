@@ -103,6 +103,7 @@
 
 <script>
 import selectTree from './components/select-tree.vue'
+import { addEmployee } from '@/api/employee'
 export default {
   components: {
     selectTree
@@ -128,7 +129,12 @@ export default {
         // 员工手机号效验规则
         mobile: [
           { required: true, message: '请输入员工手机号', trigger: 'blur' },
-          { pattern: '/^1[3-9]\d{9}$/', message: '手机号格式不正确', trigger: 'blur' }
+          {
+            //   pattern 正则表达式
+            pattern: /^1[3-9]\d{9}$/,
+            message: '手机号格式不正确',
+            trigger: 'blur'
+          }
         ],
         // 员工部门id效验规则
         departmentId: [{ required: true, message: '请选择员工所属部门', trigger: 'blur' }],
@@ -156,7 +162,15 @@ export default {
   },
   methods: {
     saveData() {
-      this.$refs.userForm.validate()
+      this.$refs.userForm.validate(async isOK => {
+        // 效验通过
+        if (isOK) {
+          await addEmployee(this.userInfo)
+          this.$message.success('添加员工成功')
+          // 跳转到员工列表
+          this.$router.push('/employee')
+        }
+      })
     }
   }
 }
